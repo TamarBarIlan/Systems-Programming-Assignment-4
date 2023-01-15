@@ -51,7 +51,6 @@ void delete_node(pnode *head)
         else
         {
             delete_edge(&temp_node, id_delete);
-            free(temp_node);
             temp_node = temp_node->next;
         }
     }
@@ -59,6 +58,7 @@ void delete_node(pnode *head)
     {
         pnode sec_node = start->next;
         free_node(&start);
+        free(start);
         start = sec_node;
     }
     else // delete node - it's not(!) the head
@@ -67,6 +67,7 @@ void delete_node(pnode *head)
         pnode trash = prev_node->next;
         prev_node->next = trash->next;
         free_node(&trash);
+        free(trash);
     }
     *head = start;
 }
