@@ -218,18 +218,18 @@ void build_graph(pnode *head)
     *head = start;
 }
 
-pnode low_n(pnode *head)
+pnode low_node(pnode *head)
 {
     pnode temp = *head;
     pnode min = temp;
-    int maxi = INFINI;
+    int max_i = INFINI;
     while (temp != NULL)
     {
-        if (temp->weight < maxi)
+        if (temp->weight < max_i)
         {
             if (temp->visit == 0)
             {
-                maxi = temp->weight;
+                max_i = temp->weight;
                 min = temp;
             }
         }
@@ -238,37 +238,37 @@ pnode low_n(pnode *head)
     return min;
 }
 
-int shortsPath(pnode *head, int src, int dest)
+int short_path(pnode *head, int src, int dest)
 {
     pnode temp = *head;
-    int counter = 0;
+    int count = 0;
     while (temp != NULL)
     {
         temp->weight = INFINI - 10;
         temp->visit = 0;
-        counter++;
+        count++;
         temp = temp->next;
     }
     pnode node_src = find_node(head, src);
     node_src->weight = 0;
-    while (counter > 0)
+    while (count > 0)
     {
-        node_src = low_n(head);
+        node_src = low_node(head);
         if (node_src->id_node == dest)
         {
             return node_src->weight;
         }
-        pedge s_edge = node_src->edges;
+        pedge src_edge = node_src->edges;
         node_src->visit = 1;
-        while (s_edge != NULL)
+        while (src_edge != NULL)
         {
-            if (node_src->weight + s_edge->weight < s_edge->dest_node->weight)
+            if (node_src->weight + src_edge->weight < src_edge->dest_node->weight)
             {
-                s_edge->dest_node->weight = node_src->weight + s_edge->weight;
+                src_edge->dest_node->weight = node_src->weight + src_edge->weight;
             }
-            s_edge = s_edge->next;
+            src_edge= src_edge->next;
         }
-        counter--;
+        count--;
     }
     return 0;
 }
@@ -287,7 +287,7 @@ void permotion(pnode *head, int arr[], int size, int num_of_cities)
         int path = 0;
         for (int j = 0; j < num_of_cities - 1; j++)
         {
-            path += shortsPath(head, arr[j], arr[j + 1]);
+            path += short_path(head, arr[j], arr[j + 1]);
         }
         if (path < min)
         {
