@@ -51,6 +51,7 @@ void delete_node(pnode *head)
         else
         {
             delete_edge(&temp_node, id_delete);
+            free(temp_node);
             temp_node = temp_node->next;
         }
     }
