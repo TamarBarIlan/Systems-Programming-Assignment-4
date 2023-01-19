@@ -217,8 +217,7 @@ void build_graph(pnode *head)
     }
     *head = start;
 }
-
-pnode low_node(pnode *head)
+pnode extract_min(pnode *head)
 {
     pnode temp = *head;
     pnode min = temp;
@@ -251,26 +250,34 @@ int short_path(pnode *head, int src, int dest)
     }
     pnode node_src = find_node(head, src);
     node_src->weight = 0;
-    while (count > 0)
+    for (int i = count; i > 0; i--)
     {
-        node_src = low_node(head);
+        node_src = extract_min(head);
         if (node_src->id_node == dest)
         {
+            if (node_src->weight == INFINI - 10)
+            {
+                return -1;
+            }
             return node_src->weight;
         }
         pedge src_edge = node_src->edges;
         node_src->visit = 1;
         while (src_edge != NULL)
         {
-            if (node_src->weight + src_edge->weight < src_edge->dest_node->weight)
-            {
-                src_edge->dest_node->weight = node_src->weight + src_edge->weight;
-            }
-            src_edge= src_edge->next;
+            relax(&node_src, &src_edge);
+            src_edge = src_edge->next;
         }
-        count--;
     }
     return 0;
+}
+
+void relax(pnode *node_src, pedge *src_edge)
+{
+    if ((*node_src)->weight + (*src_edge)->weight < (*src_edge)->dest_node->weight)
+    {
+        (*src_edge)->dest_node->weight = (*node_src)->weight + (*src_edge)->weight;
+    }
 }
 
 void swap(int *a, int *b)
@@ -287,7 +294,12 @@ void permotion(pnode *head, int arr[], int size, int num_of_cities)
         int path = 0;
         for (int j = 0; j < num_of_cities - 1; j++)
         {
-            path += short_path(head, arr[j], arr[j + 1]);
+            int num = short_path(head, arr[j], arr[j + 1]);
+            if (num == -1)
+            {
+                num = INFINI - 10;
+            }
+            path += num;
         }
         if (path < min)
         {
